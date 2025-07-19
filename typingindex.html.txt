@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Typing Speed Test</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f7fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: #fff;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 80%;
+      max-width: 700px;
+    }
+    .quote {
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+    .inputArea {
+      width: 100%;
+      padding: 10px;
+      font-size: 18px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    .stats {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #0078ff;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Typing Speed Test</h2>
+    <p class="quote" id="quote">Loading...</p>
+    <input class="inputArea" type="text" id="input" placeholder="Start typing here..." autocomplete="off" />
+    <div class="stats">
+      <p>Time: <span id="timer">0</span>s | WPM: <span id="wpm">0</span> | Accuracy: <span id="accuracy">0%</span></p>
+    </div>
+    <button onclick="restart()">Restart</button>
+  </div>
+
+  <script>
+    const quoteText = "Typing fast is a skill that can be learned with daily practice and patience.";
+    let input = document.getElementById("input");
+    let quote = document.getElementById("quote");
+    let timerDisplay = document.getElementById("timer");
+    let wpmDisplay = document.getElementById("wpm");
+    let accuracyDisplay = document.getElementById("accuracy");
+    let startTime, timerInterval;
+
+    function startTimer() {
+      startTime = new Date();
+      timerInterval = setInterval(() => {
+        const elapsed = Math.floor((new Date() - startTime) / 1000);
+        timerDisplay.innerText = elapsed;
+        updateStats();
+      }, 1000);
+    }
+
+    function updateStats() {
+      const wordsTyped = input.value.trim().split(" ").length;
+      const elapsed = (new Date() - startTime) / 60000;
+      const wpm = Math.round(wordsTyped / elapsed);
+      wpmDisplay.innerText = isNaN(wpm) ? 0 : wpm;
+
+      let correct = 0;
+      const original = quoteText.split("");
+      const typed = input.value.split("");
+
+      for (let i = 0; i < typed.length; i++) {
+        if (typed[i] === original[i]) correct++;
+      }
+
+      const accuracy = typed.length > 0 ? Math.round((correct / typed.length) * 100) : 0;
+      accuracyDisplay.innerText = accuracy + "%";
+    }
+
+    input.addEventListener("input", () => {
+      if (!startTime) startTimer();
+      updateStats();
+    });
+
+    function restart() {
+      clearInterval(timerInterval);
+      input.value = "";
+      timerDisplay.innerText = "0";
+      wpmDisplay.innerText = "0";
+      accuracyDisplay.innerText = "0%";
+      startTime = null;
+    }
+
+    quote.innerText = quoteText;
+  </script>
+</body>
+</html>
